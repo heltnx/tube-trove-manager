@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
+import { Plus, FileUp } from "lucide-react";
 import { HomeopathyList } from "@/components/HomeopathyList";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import * as XLSX from 'xlsx';
 
 interface Tube {
   id: string;
@@ -23,7 +24,6 @@ const Index = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch lists and tubes
   const { data: lists = [], isLoading } = useQuery({
     queryKey: ['lists'],
     queryFn: async () => {
@@ -47,6 +47,75 @@ const Index = () => {
       }));
     }
   });
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = new Uint8Array(e.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+        // Group data by list name
+        const groupedData: { [key: string]: any[] } = {};
+        jsonData.forEach((row: any) => {
+          const listName = row.liste || 'Liste par défaut';
+          if (!groupedData[listName]) {
+            groupedData[listName] = [];
+          }
+          groupedData[listName].push({
+            name: row.nom || row.tube || row.name,
+            usage: row.usage || row.utilite,
+            quantity: parseInt(row.quantite || row.quantity || 1)
+          });
+        });
+
+        // Create lists and tubes
+        for (const [listName, tubes] of Object.entries(groupedData)) {
+          // Create list
+          const { data: listData, error: listError } = await supabase
+            .from('lists')
+            .insert([{ name: listName }])
+            .select()
+            .single();
+
+          if (listError) throw listError;
+
+          // Create tubes for this list
+          const { error: tubesError } = await supabase
+            .from('tubes')
+            .insert(
+              tubes.map(tube => ({
+                list_id: listData.id,
+                name: tube.name,
+                usage: tube.usage,
+                quantity: tube.quantity
+              }))
+            );
+
+          if (tubesError) throw tubesError;
+        }
+
+        queryClient.invalidateQueries({ queryKey: ['lists'] });
+        toast({
+          title: "Import réussi",
+          description: "Toutes les données ont été importées avec succès.",
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      console.error('Error importing data:', error);
+      toast({
+        title: "Erreur d'import",
+        description: "Une erreur est survenue lors de l'import des données.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Add list mutation
   const addListMutation = useMutation({
@@ -211,13 +280,25 @@ const Index = () => {
           <h1 className="text-3xl font-bold text-gray-900">
             Mes Tubes Homéopathiques
           </h1>
-          <button
-            onClick={() => addListMutation.mutate()}
-            className="flex items-center gap-2 px-4 py-2 bg-apple-green text-white rounded-lg hover:bg-apple-green-dark transition-colors"
-          >
-            <Plus size={20} />
-            <span>Nouvelle liste</span>
-          </button>
+          <div className="flex gap-4">
+            <label className="flex items-center gap-2 px-4 py-2 bg-apple-green text-white rounded-lg hover:bg-apple-green-dark transition-colors cursor-pointer">
+              <FileUp size={20} />
+              <span>Importer Excel</span>
+              <input
+                type="file"
+                accept=".xlsx,.xls"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </label>
+            <button
+              onClick={() => addListMutation.mutate()}
+              className="flex items-center gap-2 px-4 py-2 bg-apple-green text-white rounded-lg hover:bg-apple-green-dark transition-colors"
+            >
+              <Plus size={20} />
+              <span>Nouvelle liste</span>
+            </button>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -234,7 +315,7 @@ const Index = () => {
           {lists.length === 0 && (
             <div className="text-center py-12 bg-white rounded-lg shadow-sm">
               <p className="text-gray-500">
-                Aucune liste créée. Cliquez sur "Nouvelle liste" pour commencer.
+                Aucune liste créée. Cliquez sur "Nouvelle liste" pour commencer ou importez un fichier Excel.
               </p>
             </div>
           )}
