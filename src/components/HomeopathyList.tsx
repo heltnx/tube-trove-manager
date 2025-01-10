@@ -71,9 +71,22 @@ export const HomeopathyList = ({
 
   const totalTubes = tubes.reduce((sum, tube) => sum + tube.quantity, 0);
 
+  const handleHeaderClick = (e: React.MouseEvent) => {
+    // Prevent toggle when clicking on buttons
+    if (
+      !(e.target as HTMLElement).closest('button') &&
+      !isEditing
+    ) {
+      onToggle();
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-      <div className="flex items-center justify-between p-4 bg-apple-green-light">
+      <div 
+        className="flex items-center justify-between p-4 bg-apple-green-light cursor-pointer"
+        onClick={handleHeaderClick}
+      >
         <div className="flex items-center gap-4 flex-1">
           {isEditing ? (
             <div className="flex items-center gap-2 flex-1">
@@ -121,12 +134,9 @@ export const HomeopathyList = ({
             </>
           )}
         </div>
-        <button
-          onClick={onToggle}
-          className="p-2 text-apple-green hover:text-apple-green-dark"
-        >
+        <div className="p-2 text-apple-green">
           {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
-        </button>
+        </div>
       </div>
       {isExpanded && (
         <div className="p-4">
