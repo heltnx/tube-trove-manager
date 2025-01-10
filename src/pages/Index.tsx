@@ -64,13 +64,22 @@ const Index = () => {
         const groupedData: { [key: string]: any[] } = {};
         jsonData.forEach((row: any) => {
           const listName = row.liste || 'Liste par défaut';
+          const tubeName = row.nom || row.tube || row.name;
+          
+          // Skip row if tube name is missing
+          if (!tubeName) {
+            console.warn('Skipping row with missing tube name:', row);
+            return;
+          }
+
           if (!groupedData[listName]) {
             groupedData[listName] = [];
           }
+          
           groupedData[listName].push({
-            name: row.nom || row.tube || row.name,
-            usage: row.usage || row.utilite,
-            quantity: parseInt(row.quantite || row.quantity || 1)
+            name: tubeName,
+            usage: row.usage || row.utilite || null,
+            quantity: parseInt(row.quantite || row.quantity || '1')
           });
         });
 
@@ -83,21 +92,37 @@ const Index = () => {
             .select()
             .single();
 
-          if (listError) throw listError;
+          if (listError) {
+            console.error('Error creating list:', listError);
+            throw listError;
+          }
 
-          // Create tubes for this list
-          const { error: tubesError } = await supabase
-            .from('tubes')
-            .insert(
-              tubes.map(tube => ({
-                list_id: listData.id,
-                name: tube.name,
-                usage: tube.usage,
-                quantity: tube.quantity
-              }))
-            );
+          if (!listData) {
+            console.error('No list data returned after creation');
+            continue;
+          }
 
-          if (tubesError) throw tubesError;
+          // Filter out any tubes with missing names
+          const validTubes = tubes.filter(tube => tube.name);
+
+          if (validTubes.length > 0) {
+            // Create tubes for this list
+            const { error: tubesError } = await supabase
+              .from('tubes')
+              .insert(
+                validTubes.map(tube => ({
+                  list_id: listData.id,
+                  name: tube.name,
+                  usage: tube.usage,
+                  quantity: isNaN(tube.quantity) ? 1 : tube.quantity
+                }))
+              );
+
+            if (tubesError) {
+              console.error('Error creating tubes:', tubesError);
+              throw tubesError;
+            }
+          }
         }
 
         queryClient.invalidateQueries({ queryKey: ['lists'] });
