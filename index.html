@@ -1,17 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tube-trove-manager</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-    <meta property="og:image" content="/og-image.png" />
-  </head>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Tubes Homéopathiques</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mes Tubes Homéopathiques</h1>
+            <button id="addListBtn" class="btn btn-primary">Nouvelle liste</button>
+        </header>
 
-  <body>
-    <div id="root"></div>
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+        <div id="lists-container"></div>
+    </div>
+
+    <template id="list-template">
+        <div class="list">
+            <div class="list-header">
+                <div class="list-title">
+                    <h2></h2>
+                    <span class="tube-count"></span>
+                </div>
+                <div class="list-actions">
+                    <button class="btn btn-edit"><i class="icon-edit"></i></button>
+                    <button class="btn btn-delete"><i class="icon-trash"></i></button>
+                    <button class="btn btn-toggle"><i class="icon-chevron"></i></button>
+                </div>
+            </div>
+            <div class="list-content">
+                <form class="tube-form">
+                    <input type="text" placeholder="Nom du tube" required>
+                    <input type="text" placeholder="Utilité (optionnel)">
+                    <input type="number" value="1" min="1">
+                    <button type="submit" class="btn btn-add"><i class="icon-plus"></i></button>
+                </form>
+                <div class="tubes-list"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tube-template">
+        <div class="tube">
+            <span class="tube-name"></span>
+            <span class="tube-usage"></span>
+            <span class="tube-quantity"></span>
+            <button class="btn btn-edit"><i class="icon-edit"></i></button>
+            <button class="btn btn-delete"><i class="icon-trash"></i></button>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+</body>
 </html>
