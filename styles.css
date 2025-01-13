@@ -96,6 +96,14 @@ header {
     display: block;
 }
 
+.tube-search {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
 .tube-form {
     display: flex;
     gap: 0.5rem;
@@ -110,12 +118,16 @@ header {
     border-radius: 0.25rem;
 }
 
-.tube-form input[type="text"] {
-    flex: 1;
+.tube-form input[name="name"] {
+    flex: 2;
 }
 
-.tube-form input[type="number"] {
+.tube-form input[name="quantity"] {
     width: 5rem;
+}
+
+.tube-form input[name="usage"] {
+    flex: 1;
 }
 
 .tubes-list {
@@ -137,18 +149,18 @@ header {
 }
 
 .tube-name {
-    flex: 1;
+    flex: 2;
     font-weight: 500;
-}
-
-.tube-usage {
-    flex: 1;
-    color: var(--gray-500);
 }
 
 .tube-quantity {
     width: 5rem;
     text-align: center;
+}
+
+.tube-usage {
+    flex: 1;
+    color: var(--gray-500);
 }
 
 .btn-edit {

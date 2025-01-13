@@ -30,10 +30,11 @@
                 </div>
             </div>
             <div class="list-content">
+                <input type="text" class="tube-search" placeholder="Rechercher un tube...">
                 <form class="tube-form">
-                    <input type="text" placeholder="Nom du tube" required>
-                    <input type="text" placeholder="Utilité (optionnel)">
-                    <input type="number" value="1" min="1">
+                    <input type="text" name="name" placeholder="Nom du tube" required>
+                    <input type="number" name="quantity" value="1" min="1">
+                    <input type="text" name="usage" placeholder="Utilité (optionnel)">
                     <button type="submit" class="btn btn-add"><i class="icon-plus"></i></button>
                 </form>
                 <div class="tubes-list"></div>
@@ -44,14 +45,14 @@
     <template id="tube-template">
         <div class="tube">
             <span class="tube-name"></span>
-            <span class="tube-usage"></span>
             <span class="tube-quantity"></span>
+            <span class="tube-usage"></span>
             <button class="btn btn-edit"><i class="icon-edit"></i></button>
             <button class="btn btn-delete"><i class="icon-trash"></i></button>
         </div>
     </template>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
