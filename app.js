@@ -1,6 +1,8 @@
 const SUPABASE_URL = "https://cudkbdtnaynbapdbhvgm.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1ZGtiZHRuYXluYmFwZGJodmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1MjExNjAsImV4cCI6MjA1MjA5NzE2MH0.KHuKs25jmBAaJGzkgyrgqlOXLCqwQrXuDAw8BtHgfVc";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Initialisation correcte du client Supabase
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 class TubeManager {
     constructor() {
@@ -20,20 +22,30 @@ class TubeManager {
 
     async loadLists() {
         try {
+            console.log('Chargement des listes...');
             const { data: lists, error: listsError } = await supabase
                 .from('lists')
                 .select('*')
                 .order('created_at');
 
-            if (listsError) throw listsError;
+            if (listsError) {
+                console.error('Erreur lors du chargement des listes:', listsError);
+                throw listsError;
+            }
+
+            console.log('Listes chargées:', lists);
 
             const { data: tubes, error: tubesError } = await supabase
                 .from('tubes')
                 .select('*')
                 .order('name');
 
-            if (tubesError) throw tubesError;
+            if (tubesError) {
+                console.error('Erreur lors du chargement des tubes:', tubesError);
+                throw tubesError;
+            }
 
+            console.log('Tubes chargés:', tubes);
             this.renderLists(lists, tubes);
         } catch (error) {
             console.error('Erreur lors du chargement des données:', error);
@@ -232,7 +244,8 @@ class TubeManager {
     }
 }
 
-// Initialisation
+// Attendre que le DOM soit chargé avant d'initialiser
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Initialisation de TubeManager...');
     new TubeManager();
 });
