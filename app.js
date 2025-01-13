@@ -1,8 +1,8 @@
 const SUPABASE_URL = "https://cudkbdtnaynbapdbhvgm.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1ZGtiZHRuYXluYmFwZGJodmdtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY1MjExNjAsImV4cCI6MjA1MjA5NzE2MH0.KHuKs25jmBAaJGzkgyrgqlOXLCqwQrXuDAw8BtHgfVc";
 
-// Initialisation correcte du client Supabase
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+// Initialisation correcte du client Supabase avec la variable globale
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 class TubeManager {
     constructor() {
@@ -11,6 +11,11 @@ class TubeManager {
         this.tubeTemplate = document.getElementById('tube-template');
         this.addListBtn = document.getElementById('addListBtn');
         
+        if (!this.listsContainer || !this.listTemplate || !this.tubeTemplate || !this.addListBtn) {
+            console.error('Éléments HTML manquants');
+            return;
+        }
+
         this.setupEventListeners();
         this.loadLists();
         this.setupRealtimeSubscription();
@@ -46,7 +51,7 @@ class TubeManager {
             }
 
             console.log('Tubes chargés:', tubes);
-            this.renderLists(lists, tubes);
+            this.renderLists(lists || [], tubes || []);
         } catch (error) {
             console.error('Erreur lors du chargement des données:', error);
         }
@@ -61,7 +66,11 @@ class TubeManager {
     }
 
     renderLists(lists, tubes) {
+        if (!this.listsContainer) return;
+        
         this.listsContainer.innerHTML = '';
+        console.log('Rendu des listes:', lists);
+        
         lists.forEach(list => {
             const listElement = this.createListElement(list);
             const listTubes = tubes.filter(tube => tube.list_id === list.id);
@@ -71,13 +80,16 @@ class TubeManager {
     }
 
     createListElement(list) {
+        if (!this.listTemplate) return null;
+        
         const listElement = this.listTemplate.content.cloneNode(true).firstElementChild;
         const titleElement = listElement.querySelector('h2');
-        const tubeCount = listElement.querySelector('.tube-count');
         
-        titleElement.textContent = list.name;
+        if (titleElement) {
+            titleElement.textContent = list.name;
+        }
+        
         this.setupListEventListeners(listElement, list);
-        
         return listElement;
     }
 
