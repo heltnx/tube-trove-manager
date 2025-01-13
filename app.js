@@ -80,6 +80,7 @@ class TubeManager {
         
         const listElement = this.listTemplate.content.cloneNode(true).firstElementChild;
         listElement.dataset.listId = list.id;
+        listElement.dataset.name = list.name.toLowerCase();
         
         const titleElement = listElement.querySelector('h2');
         if (titleElement) {
@@ -104,9 +105,10 @@ class TubeManager {
 
         editBtn.addEventListener('click', () => this.editList(list, listElement));
         deleteBtn.addEventListener('click', () => this.deleteList(list.id));
-        tubeForm.addEventListener('submit', (e) => {
+        tubeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            this.addTube(list.id, tubeForm);
+            await this.addTube(list.id, tubeForm);
+            await this.loadLists(); // Recharge les données après l'ajout
         });
     }
 
@@ -143,7 +145,11 @@ class TubeManager {
 
     async createNewList() {
         try {
-            await TubeService.createList('Nouvelle liste');
+            const name = prompt('Nom de la nouvelle liste:');
+            if (name) {
+                await TubeService.createList(name);
+                await this.loadLists();
+            }
         } catch (error) {
             console.error('Erreur lors de la création de la liste:', error);
         }
@@ -157,6 +163,7 @@ class TubeManager {
         if (newName && newName !== currentName) {
             try {
                 await TubeService.updateList(list.id, newName);
+                await this.loadLists();
             } catch (error) {
                 console.error('Erreur lors de la modification de la liste:', error);
             }
@@ -167,6 +174,7 @@ class TubeManager {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette liste ?')) {
             try {
                 await TubeService.deleteList(listId);
+                await this.loadLists();
             } catch (error) {
                 console.error('Erreur lors de la suppression de la liste:', error);
             }
@@ -187,6 +195,7 @@ class TubeManager {
             );
             form.reset();
             quantityInput.value = "1";
+            await this.loadLists();
         } catch (error) {
             console.error('Erreur lors de l\'ajout du tube:', error);
         }
@@ -203,6 +212,7 @@ class TubeManager {
 
         try {
             await TubeService.updateTube(tube.id, newName, newUsage, newQuantity);
+            await this.loadLists();
         } catch (error) {
             console.error('Erreur lors de la modification du tube:', error);
         }
@@ -212,6 +222,7 @@ class TubeManager {
         if (confirm('Êtes-vous sûr de vouloir supprimer ce tube ?')) {
             try {
                 await TubeService.deleteTube(tubeId);
+                await this.loadLists();
             } catch (error) {
                 console.error('Erreur lors de la suppression du tube:', error);
             }
