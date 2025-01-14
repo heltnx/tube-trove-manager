@@ -169,8 +169,13 @@ class TubeManager {
                 const newUsage = tubeElement.querySelector('.tube-usage').value;
 
                 if (newName && !isNaN(newQuantity) && newQuantity > 0) {
-                    await this.updateTube(tube.id, newName, newUsage, newQuantity);
-                    this.renderTubeContent(tubeElement, { ...tube, name: newName, quantity: newQuantity, usage: newUsage });
+                    try {
+                        await TubeService.updateTube(tube.id, newName, newUsage, newQuantity);
+                        await this.loadLists();
+                        tubeElement.classList.remove('editing');
+                    } catch (error) {
+                        console.error('Erreur lors de la mise à jour du tube:', error);
+                    }
                 }
             });
         } else {
