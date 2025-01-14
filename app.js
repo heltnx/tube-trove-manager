@@ -46,7 +46,6 @@ class TubeManager {
     renderLists(lists, tubes) {
         if (!this.listsContainer) return;
         
-        // Sauvegarde l'état d'expansion des listes
         const expandedLists = new Set();
         this.listsContainer.querySelectorAll('.list').forEach(list => {
             if (list.classList.contains('expanded')) {
@@ -62,14 +61,12 @@ class TubeManager {
             const listTubes = tubes.filter(tube => tube.list_id === list.id);
             this.renderTubes(listElement, listTubes);
             
-            // Restaure l'état d'expansion
             if (expandedLists.has(list.id)) {
                 listElement.classList.add('expanded');
             }
             
             this.listsContainer.appendChild(listElement);
             
-            // Crée un gestionnaire de liste pour la recherche
             const listManager = new ListManager(listElement, list, listTubes);
             this.listManagers.set(list.id, listManager);
         });
@@ -96,19 +93,29 @@ class TubeManager {
         const editBtn = listElement.querySelector('.btn-edit');
         const deleteBtn = listElement.querySelector('.btn-delete');
         const tubeForm = listElement.querySelector('.tube-form');
+        const toggleBtn = listElement.querySelector('.btn-toggle');
+
+        const toggleExpand = () => listElement.classList.toggle('expanded');
 
         header.addEventListener('click', (e) => {
             if (!e.target.closest('button')) {
-                listElement.classList.toggle('expanded');
+                toggleExpand();
             }
         });
 
+        toggleBtn.addEventListener('click', toggleExpand);
+
         editBtn.addEventListener('click', () => this.editList(list, listElement));
-        deleteBtn.addEventListener('click', () => this.deleteList(list.id));
+        deleteBtn.addEventListener('click', () => {
+            if (confirm('Voulez-vous vraiment supprimer cette liste et tous ses tubes ?')) {
+                this.deleteList(list.id);
+            }
+        });
+        
         tubeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.addTube(list.id, tubeForm);
-            await this.loadLists(); // Recharge les données après l'ajout
+            await this.loadLists();
         });
     }
 
@@ -121,26 +128,63 @@ class TubeManager {
             tubesContainer.appendChild(tubeElement);
         });
 
-        const listManager = this.listManagers.get(listElement.dataset.listId);
-        if (listManager) {
-            listManager.updateTubeCount();
+        const totalTubes = tubes.reduce((sum, tube) => sum + tube.quantity, 0);
+        const tubeCount = listElement.querySelector('.tube-count');
+        if (tubeCount) {
+            tubeCount.textContent = `${totalTubes} tube${totalTubes !== 1 ? 's' : ''}`;
         }
     }
 
     createTubeElement(tube) {
         const tubeElement = this.tubeTemplate.content.cloneNode(true).firstElementChild;
-        
-        tubeElement.querySelector('.tube-name').textContent = tube.name;
-        tubeElement.querySelector('.tube-quantity').textContent = tube.quantity;
-        tubeElement.querySelector('.tube-usage').textContent = tube.usage || '';
-
-        const editBtn = tubeElement.querySelector('.btn-edit');
-        const deleteBtn = tubeElement.querySelector('.btn-delete');
-
-        editBtn.addEventListener('click', () => this.editTube(tube, tubeElement));
-        deleteBtn.addEventListener('click', () => this.deleteTube(tube.id));
-
+        this.renderTubeContent(tubeElement, tube);
         return tubeElement;
+    }
+
+    renderTubeContent(tubeElement, tube, isEditing = false) {
+        if (isEditing) {
+            tubeElement.classList.add('editing');
+            tubeElement.innerHTML = `
+                <input type="text" class="tube-name" value="${tube.name}">
+                <input type="number" class="tube-quantity" value="${tube.quantity}" min="1">
+                <input type="text" class="tube-usage" value="${tube.usage || ''}">
+                <button class="btn btn-edit"><i class="icon-check"></i></button>
+                <button class="btn btn-delete"><i class="icon-trash"></i></button>
+            `;
+
+            const saveBtn = tubeElement.querySelector('.btn-edit');
+            saveBtn.addEventListener('click', async () => {
+                const newName = tubeElement.querySelector('.tube-name').value;
+                const newQuantity = parseInt(tubeElement.querySelector('.tube-quantity').value);
+                const newUsage = tubeElement.querySelector('.tube-usage').value;
+
+                if (newName && !isNaN(newQuantity) && newQuantity > 0) {
+                    await this.updateTube(tube.id, newName, newUsage, newQuantity);
+                    this.renderTubeContent(tubeElement, { ...tube, name: newName, quantity: newQuantity, usage: newUsage });
+                }
+            });
+        } else {
+            tubeElement.classList.remove('editing');
+            tubeElement.innerHTML = `
+                <span class="tube-name">${tube.name}</span>
+                <span class="tube-quantity">${tube.quantity}</span>
+                <span class="tube-usage">${tube.usage || ''}</span>
+                <button class="btn btn-edit"><i class="icon-edit"></i></button>
+                <button class="btn btn-delete"><i class="icon-trash"></i></button>
+            `;
+
+            const editBtn = tubeElement.querySelector('.btn-edit');
+            editBtn.addEventListener('click', () => {
+                this.renderTubeContent(tubeElement, tube, true);
+            });
+        }
+
+        const deleteBtn = tubeElement.querySelector('.btn-delete');
+        deleteBtn.addEventListener('click', () => {
+            if (confirm('Voulez-vous vraiment supprimer ce tube ?')) {
+                this.deleteTube(tube.id);
+            }
+        });
     }
 
     async createNewList() {
@@ -230,7 +274,6 @@ class TubeManager {
     }
 }
 
-// Attendre que le DOM soit chargé avant d'initialiser
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Initialisation de TubeManager...');
     new TubeManager();

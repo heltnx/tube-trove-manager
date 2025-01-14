@@ -68,12 +68,38 @@ header {
     overflow: hidden;
 }
 
-.list[data-name*="sausset"] .tube:nth-child(odd) {
+.list[data-name*="sausset"] .tube:nth-child(odd):not([style*="display: none"]) {
     background-color: var(--soft-green);
 }
 
-.list[data-name*="campello"] .tube:nth-child(odd) {
+.list[data-name*="campello"] .tube:nth-child(odd):not([style*="display: none"]) {
     background-color: var(--soft-blue);
+}
+
+.list[data-name*="sausset"] .tube-search,
+.list[data-name*="sausset"] .btn-add {
+    background-color: #e1ead6;
+}
+
+.list[data-name*="campello"] .tube {
+    background-color: #EDF5FF;
+}
+
+.list[data-name*="campello"] .list-header {
+    background-color: #DEEAF9;
+}
+
+.list[data-name*="campello"] .tube-search,
+.list[data-name*="campello"] .btn-add {
+    background-color: #e5ecf5;
+}
+
+.list[data-name*="campello"] .btn-edit {
+    color: #0FA0CE;
+}
+
+.list[data-name*="campello"] .btn-edit:hover {
+    color: #0c8eb8;
 }
 
 .list-header {
@@ -157,6 +183,30 @@ header {
     gap: 0.5rem;
     padding: 0.5rem;
     border-radius: 0.5rem;
+}
+
+.tube.editing {
+    background-color: var(--gray-100);
+    padding: 0.25rem;
+}
+
+.tube.editing input {
+    padding: 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    background: white;
+}
+
+.tube.editing .tube-name {
+    flex: 2;
+}
+
+.tube.editing .tube-quantity {
+    width: 5rem;
+}
+
+.tube.editing .tube-usage {
+    flex: 1;
 }
 
 .tube:hover {
