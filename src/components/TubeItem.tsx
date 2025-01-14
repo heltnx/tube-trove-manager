@@ -25,9 +25,9 @@ export const TubeItem = ({
   const [editUsage, setEditUsage] = useState(usage);
   const [editQuantity, setEditQuantity] = useState(quantity);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (editName.trim() && editQuantity > 0) {
-      onUpdate(id, editName.trim(), editUsage.trim(), editQuantity);
+      await onUpdate(id, editName.trim(), editUsage.trim(), editQuantity);
       setIsEditing(false);
     }
   };

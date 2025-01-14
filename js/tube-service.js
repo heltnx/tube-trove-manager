@@ -64,16 +64,24 @@ export class TubeService {
     }
 
     static async updateTube(id, name, usage, quantity) {
-        const { error } = await supabase
+        console.log('Updating tube:', { id, name, usage, quantity });
+        const { data, error } = await supabase
             .from('tubes')
             .update({
                 name,
                 usage: usage || null,
-                quantity
+                quantity: parseInt(quantity)
             })
-            .eq('id', id);
+            .eq('id', id)
+            .select();
 
-        if (error) throw error;
+        if (error) {
+            console.error('Error updating tube:', error);
+            throw error;
+        }
+        
+        console.log('Update response:', data);
+        return data;
     }
 
     static async deleteTube(id) {
