@@ -36,11 +36,21 @@ class TubeManager {
     }
 
     setupRealtimeSubscription() {
-        const channel = supabase
-            .channel('db-changes')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'lists' }, () => this.loadLists())
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'tubes' }, () => this.loadLists())
-            .subscribe();
+        try {
+            const subscription = supabase
+                .from('lists')
+                .on('*', () => this.loadLists())
+                .subscribe();
+
+            const tubesSubscription = supabase
+                .from('tubes')
+                .on('*', () => this.loadLists())
+                .subscribe();
+
+            console.log('Subscriptions établies:', { subscription, tubesSubscription });
+        } catch (error) {
+            console.error('Erreur lors de la configuration des subscriptions:', error);
+        }
     }
 
     renderLists(lists, tubes) {
