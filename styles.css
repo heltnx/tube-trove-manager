@@ -32,11 +32,32 @@ body {
     padding: 0 1rem;
 }
 
+@media (max-width: 640px) {
+    .container {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+}
+
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+}
+
+@media (max-width: 640px) {
+    header {
+        margin-bottom: 1rem;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    .icon-chevron {
+        display: none;
+    }
 }
 
 .btn {
@@ -128,6 +149,12 @@ header {
     display: none;
 }
 
+@media (max-width: 640px) {
+    .list-content {
+        padding: 0.625rem 0;
+    }
+}
+
 .list.expanded .list-content {
     display: block;
 }
@@ -154,6 +181,17 @@ header {
     border: 1px solid var(--gray-200);
     border-radius: 0.25rem;
     min-width: 80px;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
+    .tube-form {
+        flex-direction: column;
+    }
+
+    .tube-form input {
+        width: 100%;
+    }
 }
 
 .tube-form input[name="name"] {
@@ -175,6 +213,7 @@ header {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .tube {
@@ -195,6 +234,7 @@ header {
     border: 1px solid var(--gray-200);
     border-radius: 0.25rem;
     background: white;
+    font-size: 0.875rem;
 }
 
 .tube.editing .tube-name {
@@ -203,6 +243,7 @@ header {
 
 .tube.editing .tube-quantity {
     width: 5rem;
+    text-align: center;
 }
 
 .tube.editing .tube-usage {
@@ -216,16 +257,33 @@ header {
 .tube-name {
     flex: 2;
     font-weight: 500;
+    min-width: 120px;
 }
 
 .tube-quantity {
-    width: 5rem;
+    width: 3rem;
     text-align: center;
 }
 
 .tube-usage {
     flex: 1;
     color: var(--gray-500);
+    min-width: 100px;
+}
+
+@media (max-width: 640px) {
+    .tube {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .tube-name {
+        min-width: 100px;
+    }
+
+    .tube-usage {
+        min-width: 80px;
+    }
 }
 
 .btn-edit {
@@ -247,7 +305,6 @@ header {
     color: var(--red-700);
 }
 
-/* Icônes basiques en CSS */
 .icon-edit::before { content: "✎"; font-size: 1.2em; }
 .icon-trash::before { content: "✕"; color: #ea384c; }
 .icon-plus::before { content: "+"; }
