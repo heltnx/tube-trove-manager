@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { ListHeader } from "./ListHeader";
+import { ChevronDown, ChevronUp, Edit2, Trash2, Check, X } from "lucide-react";
 import { TubeForm } from "./TubeForm";
-import { TubeList } from "./TubeList";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { TubeItem } from "./TubeItem";
 
 interface Tube {
   id: string;
@@ -32,9 +31,6 @@ export const HomeopathyList = ({
 }: HomeopathyListProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(name);
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
-  const totalTubes = tubes.reduce((sum, tube) => sum + tube.quantity, 0);
 
   const handleSaveName = () => {
     onUpdate(id, editName, tubes);
@@ -73,26 +69,87 @@ export const HomeopathyList = ({
     onUpdate(id, editName, updatedTubes);
   };
 
+  const totalTubes = tubes.reduce((sum, tube) => sum + tube.quantity, 0);
+
+  const handleHeaderClick = (e: React.MouseEvent) => {
+    // Prevent toggle when clicking on buttons
+    if (
+      !(e.target as HTMLElement).closest('button') &&
+      !isEditing
+    ) {
+      onToggle();
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden mb-4">
-      <ListHeader
-        name={name}
-        tubeCount={totalTubes}
-        isExpanded={isExpanded}
-        onToggle={onToggle}
-        onEdit={() => setIsEditing(true)}
-        onDelete={() => onDelete(id)}
-      />
+      <div 
+        className="flex items-center justify-between p-4 bg-apple-green-light cursor-pointer"
+        onClick={handleHeaderClick}
+      >
+        <div className="flex items-center gap-4 flex-1">
+          {isEditing ? (
+            <div className="flex items-center gap-2 flex-1">
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="flex-1 p-2 border rounded"
+                placeholder="Nom de la liste"
+              />
+              <button
+                onClick={handleSaveName}
+                className="p-2 text-apple-green hover:text-apple-green-dark"
+              >
+                <Check size={20} />
+              </button>
+              <button
+                onClick={() => {
+                  setEditName(name);
+                  setIsEditing(false);
+                }}
+                className="p-2 text-gray-500 hover:text-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <h2 className="text-xl font-semibold flex-1">{name}</h2>
+              <span className="text-sm text-gray-600">
+                {totalTubes} tube{totalTubes !== 1 ? "s" : ""}
+              </span>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="p-2 text-apple-green hover:text-apple-green-dark"
+              >
+                <Edit2 size={20} />
+              </button>
+              <button
+                onClick={() => onDelete(id)}
+                className="p-2 text-red-500 hover:text-red-700"
+              >
+                <Trash2 size={20} />
+              </button>
+            </>
+          )}
+        </div>
+        <div className="p-2 text-apple-green">
+          {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
+        </div>
+      </div>
       {isExpanded && (
-        <div className="p-0 md:p-4">
-          <TubeForm onAdd={handleAddTube} isMobile={isMobile} />
-          <div className="mt-4">
-            <TubeList
-              tubes={tubes}
-              listName={name}
-              onUpdate={handleUpdateTube}
-              onDelete={handleDeleteTube}
-            />
+        <div className="p-4">
+          <TubeForm onAdd={handleAddTube} />
+          <div className="mt-4 space-y-2">
+            {tubes.map((tube) => (
+              <TubeItem
+                key={tube.id}
+                {...tube}
+                onUpdate={handleUpdateTube}
+                onDelete={handleDeleteTube}
+              />
+            ))}
           </div>
         </div>
       )}
