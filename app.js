@@ -105,6 +105,16 @@ class TubeManager {
         const tubeForm = listElement.querySelector('.tube-form');
         const toggleBtn = listElement.querySelector('.btn-toggle');
 
+        // Ajout du bouton mobile
+        const addTubeBtn = document.createElement('button');
+        addTubeBtn.className = 'add-tube-btn';
+        addTubeBtn.innerHTML = '<i class="icon-plus"></i> Ajouter un tube';
+        tubeForm.parentNode.insertBefore(addTubeBtn, tubeForm);
+
+        addTubeBtn.addEventListener('click', () => {
+            tubeForm.classList.toggle('expanded');
+        });
+
         const toggleExpand = () => listElement.classList.toggle('expanded');
 
         header.addEventListener('click', (e) => {
@@ -125,6 +135,7 @@ class TubeManager {
         tubeForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             await this.addTube(list.id, tubeForm);
+            tubeForm.classList.remove('expanded');
             await this.loadLists();
         });
     }
