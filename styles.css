@@ -32,32 +32,11 @@ body {
     padding: 0 1rem;
 }
 
-@media (max-width: 640px) {
-    .container {
-        margin: 1rem auto;
-        padding: 0 0.5rem;
-    }
-}
-
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
-}
-
-@media (max-width: 640px) {
-    header {
-        margin-bottom: 1rem;
-    }
-
-    h1 {
-        font-size: 1.25rem;
-    }
-
-    .icon-chevron {
-        display: none;
-    }
 }
 
 .btn {
@@ -89,40 +68,6 @@ header {
     overflow: hidden;
 }
 
-.list[data-name*="sausset"] .tube:nth-child(odd):not([style*="display: none"]) {
-    background-color: var(--soft-green);
-}
-
-.list[data-name*="campello"] .tube:nth-child(odd):not([style*="display: none"]) {
-    background-color: var(--soft-blue);
-}
-
-.list[data-name*="sausset"] .tube-search,
-.list[data-name*="sausset"] .btn-add {
-    background-color: #e1ead6;
-}
-
-.list[data-name*="campello"] .tube {
-    background-color: #EDF5FF;
-}
-
-.list[data-name*="campello"] .list-header {
-    background-color: #DEEAF9;
-}
-
-.list[data-name*="campello"] .tube-search,
-.list[data-name*="campello"] .btn-add {
-    background-color: #e5ecf5;
-}
-
-.list[data-name*="campello"] .btn-edit {
-    color: #0FA0CE;
-}
-
-.list[data-name*="campello"] .btn-edit:hover {
-    color: #0c8eb8;
-}
-
 .list-header {
     background-color: var(--apple-green-light);
     padding: 1rem;
@@ -147,12 +92,6 @@ header {
 .list-content {
     padding: 1rem;
     display: none;
-}
-
-@media (max-width: 640px) {
-    .list-content {
-        padding: 0.625rem 0;
-    }
 }
 
 .list.expanded .list-content {
@@ -184,7 +123,87 @@ header {
     font-size: 0.875rem;
 }
 
+.tubes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.tube {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.tube-name {
+    flex: 2;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.tube-quantity {
+    width: 3rem;
+    text-align: center;
+}
+
+.tube-usage {
+    flex: 1;
+    color: var(--gray-500);
+    min-width: 100px;
+}
+
+.btn-edit {
+    color: var(--apple-green);
+    background: transparent;
+}
+
+.btn-edit:hover {
+    color: var(--apple-green-dark);
+}
+
+.btn-delete {
+    color: var(--red-500);
+    background: transparent;
+}
+
+.btn-delete:hover {
+    color: var(--red-700);
+}
+
 @media (max-width: 640px) {
+    .container {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    .icon-chevron {
+        display: none;
+    }
+
+    .list-content {
+        padding: 0.625rem 0;
+    }
+
+    .tube {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .tube-name {
+        min-width: 100px;
+    }
+
+    .tube-usage {
+        min-width: 80px;
+    }
+
     .tube-form {
         display: none;
     }
@@ -219,102 +238,6 @@ header {
     .add-tube-btn {
         display: none;
     }
-}
-
-.tubes-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-}
-
-.tube {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-}
-
-.tube.editing {
-    background-color: var(--gray-100);
-    padding: 0.25rem;
-}
-
-.tube.editing input {
-    padding: 0.5rem;
-    border: 1px solid var(--gray-200);
-    border-radius: 0.25rem;
-    background: white;
-    font-size: 0.875rem;
-}
-
-.tube.editing .tube-name {
-    flex: 2;
-}
-
-.tube.editing .tube-quantity {
-    width: 5rem;
-    text-align: center;
-}
-
-.tube.editing .tube-usage {
-    flex: 1;
-}
-
-.tube:hover {
-    background-color: var(--gray-50);
-}
-
-.tube-name {
-    flex: 2;
-    font-weight: 500;
-    min-width: 120px;
-}
-
-.tube-quantity {
-    width: 3rem;
-    text-align: center;
-}
-
-.tube-usage {
-    flex: 1;
-    color: var(--gray-500);
-    min-width: 100px;
-}
-
-@media (max-width: 640px) {
-    .tube {
-        padding: 0.5rem;
-        font-size: 0.875rem;
-    }
-
-    .tube-name {
-        min-width: 100px;
-    }
-
-    .tube-usage {
-        min-width: 80px;
-    }
-}
-
-.btn-edit {
-    color: var(--apple-green);
-    background: transparent;
-    font-size: 1.2rem;
-}
-
-.btn-edit:hover {
-    color: var(--apple-green-dark);
-}
-
-.btn-delete {
-    color: var(--red-500);
-    background: transparent;
-}
-
-.btn-delete:hover {
-    color: var(--red-700);
 }
 
 .icon-edit::before { content: "✎"; font-size: 1.2em; }
