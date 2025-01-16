@@ -223,16 +223,18 @@ class TubeManager {
             tubeElement.classList.remove('editing');
             tubeElement.dataset.tubeId = tube.id;
             tubeElement.innerHTML = `
-                <span class="tube-name">${tube.name}</span>
-                <span class="tube-quantity">${tube.quantity}</span>
-                <span class="tube-usage">${tube.usage || ''}</span>
-                <button class="btn btn-edit"><i class="icon-edit"></i></button>
+                <span class="tube-name" role="button">${tube.name}</span>
+                <span class="tube-quantity" role="button">${tube.quantity}</span>
+                <span class="tube-usage" role="button">${tube.usage || ''}</span>
                 <button class="btn btn-delete"><i class="icon-trash"></i></button>
             `;
 
-            const editBtn = tubeElement.querySelector('.btn-edit');
-            editBtn.addEventListener('click', () => {
-                this.renderTubeContent(tubeElement, tube, true);
+            // Ajouter les écouteurs pour l'édition au clic sur chaque champ
+            const fields = tubeElement.querySelectorAll('[role="button"]');
+            fields.forEach(field => {
+                field.addEventListener('click', () => {
+                    this.renderTubeContent(tubeElement, tube, true);
+                });
             });
         }
 
