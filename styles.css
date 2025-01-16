@@ -200,7 +200,7 @@ header {
 }
 
 .tube.editing .tube-quantity {
-    width: 5rem;
+    width: auto; /* Change to auto to remove the spinner */
     text-align: center;
 }
 
@@ -215,7 +215,7 @@ header {
 }
 
 .tube-quantity {
-    width: 3rem;
+    width: auto; /* Change to auto to remove the spinner */
     text-align: center;
 }
 
@@ -343,7 +343,16 @@ header {
 .icon-edit::before { content: "✎"; font-size: 1.2em; }
 .icon-trash::before { content: "✕"; color: #ea384c; }
 .icon-plus::before { content: "+"; }
-.icon-chevron::before { content: "▼"; }
 .list.expanded .icon-chevron::before { content: "▲"; }
 .icon-check::before { content: "✓"; color: var(--apple-green); }
 
+/* Suppression des flèches du input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
