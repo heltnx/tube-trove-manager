@@ -8,6 +8,7 @@ class TubeManager {
         this.tubeTemplate = document.getElementById('tube-template');
         this.addListBtn = document.getElementById('addListBtn');
         this.listManagers = new Map();
+        this.currentEditingTubeId = null;
         
         if (!this.listsContainer || !this.listTemplate || !this.tubeTemplate || !this.addListBtn) {
             console.error('Éléments HTML manquants');
@@ -164,7 +165,24 @@ class TubeManager {
 
     renderTubeContent(tubeElement, tube, isEditing = false) {
         if (isEditing) {
+            // Si on essaie d'éditer un nouveau tube alors qu'un autre est en cours d'édition
+            if (this.currentEditingTubeId && this.currentEditingTubeId !== tube.id) {
+                // On trouve l'élément en cours d'édition et on le ferme
+                const currentEditingElement = document.querySelector(`[data-tube-id="${this.currentEditingTubeId}"]`);
+                if (currentEditingElement) {
+                    this.renderTubeContent(currentEditingElement, 
+                        { id: this.currentEditingTubeId, 
+                          name: currentEditingElement.querySelector('.tube-name').value,
+                          quantity: currentEditingElement.querySelector('.tube-quantity').value,
+                          usage: currentEditingElement.querySelector('.tube-usage').value 
+                        }, 
+                        false);
+                }
+            }
+            
+            this.currentEditingTubeId = tube.id;
             tubeElement.classList.add('editing');
+            tubeElement.dataset.tubeId = tube.id;
             tubeElement.innerHTML = `
                 <input type="text" class="tube-name" value="${tube.name}">
                 <input type="number" class="tube-quantity" value="${tube.quantity}" min="1">
@@ -182,6 +200,7 @@ class TubeManager {
                 if (newName && !isNaN(newQuantity) && newQuantity > 0) {
                     try {
                         await TubeService.updateTube(tube.id, newName, newUsage, newQuantity);
+                        this.currentEditingTubeId = null;
                         await this.loadLists();
                         tubeElement.classList.remove('editing');
                     } catch (error) {
@@ -191,6 +210,7 @@ class TubeManager {
             });
         } else {
             tubeElement.classList.remove('editing');
+            tubeElement.dataset.tubeId = tube.id;
             tubeElement.innerHTML = `
                 <span class="tube-name">${tube.name}</span>
                 <span class="tube-quantity">${tube.quantity}</span>

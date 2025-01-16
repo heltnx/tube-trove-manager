@@ -306,7 +306,7 @@ header {
     }
 
     .tube .btn-edit {
-        margin-bottom: 0.25rem;
+        margin-bottom: 1.5rem;  /* Augmentation du padding bottom */
         font-size: 1.4em;
     }
 
@@ -346,3 +346,4 @@ header {
 .icon-chevron::before { content: "▼"; }
 .list.expanded .icon-chevron::before { content: "▲"; }
 .icon-check::before { content: "✓"; color: var(--apple-green); }
+
