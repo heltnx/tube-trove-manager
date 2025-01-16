@@ -18,6 +18,13 @@ class TubeManager {
         this.setupEventListeners();
         this.loadLists();
         this.setupRealtimeSubscription();
+        
+        // Ajout d'un écouteur pour sauvegarder lors de la fermeture de la page
+        window.addEventListener('beforeunload', () => {
+            if (this.currentEditingTubeId) {
+                this.saveCurrentEditingTube();
+            }
+        });
     }
 
     setupEventListeners() {
@@ -163,21 +170,35 @@ class TubeManager {
         return tubeElement;
     }
 
+    async saveCurrentEditingTube() {
+        const currentEditingElement = document.querySelector(`[data-tube-id="${this.currentEditingTubeId}"]`);
+        if (currentEditingElement) {
+            const newName = currentEditingElement.querySelector('.tube-name').value;
+            const newQuantity = parseInt(currentEditingElement.querySelector('.tube-quantity').value);
+            const newUsage = currentEditingElement.querySelector('.tube-usage').value;
+
+            if (newName && !isNaN(newQuantity) && newQuantity > 0) {
+                try {
+                    await TubeService.updateTube(
+                        this.currentEditingTubeId,
+                        newName,
+                        newUsage,
+                        newQuantity
+                    );
+                    this.currentEditingTubeId = null;
+                    await this.loadLists();
+                } catch (error) {
+                    console.error('Erreur lors de la sauvegarde du tube:', error);
+                }
+            }
+        }
+    }
+
     renderTubeContent(tubeElement, tube, isEditing = false) {
         if (isEditing) {
             // Si on essaie d'éditer un nouveau tube alors qu'un autre est en cours d'édition
             if (this.currentEditingTubeId && this.currentEditingTubeId !== tube.id) {
-                // On trouve l'élément en cours d'édition et on le ferme
-                const currentEditingElement = document.querySelector(`[data-tube-id="${this.currentEditingTubeId}"]`);
-                if (currentEditingElement) {
-                    this.renderTubeContent(currentEditingElement, 
-                        { id: this.currentEditingTubeId, 
-                          name: currentEditingElement.querySelector('.tube-name').value,
-                          quantity: currentEditingElement.querySelector('.tube-quantity').value,
-                          usage: currentEditingElement.querySelector('.tube-usage').value 
-                        }, 
-                        false);
-                }
+                this.saveCurrentEditingTube();
             }
             
             this.currentEditingTubeId = tube.id;
@@ -187,27 +208,17 @@ class TubeManager {
                 <input type="text" class="tube-name" value="${tube.name}">
                 <input type="number" class="tube-quantity" value="${tube.quantity}" min="1">
                 <input type="text" class="tube-usage" value="${tube.usage || ''}">
-                <button class="btn btn-edit"><i class="icon-check"></i></button>
                 <button class="btn btn-delete"><i class="icon-trash"></i></button>
             `;
 
-            const saveBtn = tubeElement.querySelector('.btn-edit');
-            saveBtn.addEventListener('click', async () => {
-                const newName = tubeElement.querySelector('.tube-name').value;
-                const newQuantity = parseInt(tubeElement.querySelector('.tube-quantity').value);
-                const newUsage = tubeElement.querySelector('.tube-usage').value;
-
-                if (newName && !isNaN(newQuantity) && newQuantity > 0) {
-                    try {
-                        await TubeService.updateTube(tube.id, newName, newUsage, newQuantity);
-                        this.currentEditingTubeId = null;
-                        await this.loadLists();
-                        tubeElement.classList.remove('editing');
-                    } catch (error) {
-                        console.error('Erreur lors de la mise à jour du tube:', error);
-                    }
-                }
+            // Ajout des écouteurs pour la sauvegarde automatique
+            const inputs = tubeElement.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('blur', async () => {
+                    await this.saveCurrentEditingTube();
+                });
             });
+
         } else {
             tubeElement.classList.remove('editing');
             tubeElement.dataset.tubeId = tube.id;
