@@ -9,8 +9,10 @@
     --gray-700: #374151;
     --red-500: #EF4444;
     --red-700: #B91C1C;
-    --soft-green: #F2FCE2;
-    --soft-blue: #D3E4FD;
+    --soft-green: #D6F2B4;
+    --soft-green-alt: #EEF3E6;
+    --soft-blue: #DEEAF9;
+    --soft-blue-alt: #e5ecf5;
 }
 
 * {
@@ -65,12 +67,15 @@ header {
     border-radius: 0.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 1rem;
-    overflow: hidden;
 }
 
 /* Styles spécifiques pour Sausset */
-.list[data-name*="sausset"] .tube:nth-child(even) {
+.list[data-name*="sausset"] .tube:nth-child(odd) {
     background-color: var(--soft-green);
+}
+
+.list[data-name*="sausset"] .tube:nth-child(even) {
+    background-color: var(--soft-green-alt);
 }
 
 .list[data-name*="sausset"] .list-header {
@@ -83,17 +88,21 @@ header {
 }
 
 /* Styles spécifiques pour Campello */
-.list[data-name*="campello"] .tube:nth-child(even) {
+.list[data-name*="campello"] .tube:nth-child(odd) {
     background-color: var(--soft-blue);
 }
 
+.list[data-name*="campello"] .tube:nth-child(even) {
+    background-color: var(--soft-blue-alt);
+}
+
 .list[data-name*="campello"] .list-header {
-    background-color: #DEEAF9;
+    background-color: var(--soft-blue);
 }
 
 .list[data-name*="campello"] .tube-search,
 .list[data-name*="campello"] .btn-add {
-    background-color: #e5ecf5;
+    background-color: var(--soft-blue-alt);
 }
 
 .list[data-name*="campello"] .btn-edit {
@@ -219,19 +228,13 @@ header {
 .btn-edit {
     color: var(--apple-green);
     background: transparent;
-}
-
-.btn-edit:hover {
-    color: var(--apple-green-dark);
+    font-size: 1.2em;
 }
 
 .btn-delete {
     color: var(--red-500);
     background: transparent;
-}
-
-.btn-delete:hover {
-    color: var(--red-700);
+    font-size: 0.9em;
 }
 
 @media (max-width: 640px) {
@@ -292,6 +295,42 @@ header {
 
     .add-tube-btn:hover {
         background-color: var(--apple-green-dark);
+    }
+
+    .tube .btn-edit,
+    .tube .btn-delete {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: flex-end;
+    }
+
+    .tube .btn-edit {
+        margin-bottom: 0.25rem;
+        font-size: 1.4em;
+    }
+
+    .tube .btn-delete {
+        font-size: 1.1em;
+    }
+
+    .tube {
+        position: relative;
+        padding-right: 3rem;
+    }
+
+    .tube .btn-edit,
+    .tube .btn-delete {
+        position: absolute;
+        right: 0.5rem;
+    }
+
+    .tube .btn-edit {
+        top: 0.25rem;
+    }
+
+    .tube .btn-delete {
+        bottom: 0.25rem;
     }
 }
 
