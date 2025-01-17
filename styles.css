@@ -199,6 +199,8 @@ h2 {
 .tube.editing {
     background-color: var(--gray-100);
     padding: 0.25rem;
+    display: flex;
+    align-items: center;
 }
 
 .tube.editing input {
@@ -210,7 +212,9 @@ h2 {
 }
 
 .tube.editing .tube-name {
-    flex: 2;
+    width: inherit;
+    min-width: 120px;
+    max-width: fit-content;
 }
 
 .tube.editing .tube-quantity {
@@ -226,6 +230,9 @@ h2 {
     flex: 2;
     font-weight: 500;
     min-width: 120px;
+    max-width: fit-content;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .tube-quantity {
