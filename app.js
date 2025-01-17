@@ -122,9 +122,15 @@ class TubeManager {
             tubeForm.classList.toggle('expanded');
         });
 
-        const toggleExpand = () => listElement.classList.toggle('expanded');
+        header.addEventListener('click', (e) => {
+            // Si on clique sur le titre ou son input, ne pas toggle l'expansion
+            if (!e.target.matches('h2, input')) {
+                listElement.classList.toggle('expanded');
+            }
+        });
 
-        titleElement.addEventListener('click', () => {
+        titleElement.addEventListener('click', (e) => {
+            e.stopPropagation(); // Empêche le toggle de la liste
             const currentName = titleElement.textContent;
             const input = document.createElement('input');
             input.type = 'text';
@@ -151,6 +157,7 @@ class TubeManager {
             titleElement.replaceWith(input);
             input.focus();
         });
+
         deleteBtn.addEventListener('click', () => {
             if (confirm('Voulez-vous vraiment supprimer cette liste et tous ses tubes ?')) {
                 this.deleteList(list.id);

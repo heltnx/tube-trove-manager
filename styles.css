@@ -228,8 +228,15 @@ h2 {
 }
 
 .tube-quantity {
-    width: auto; /* Change to auto to remove the spinner */
+    width: 3ch;
     text-align: center;
+}
+
+input[type="number"].tube-quantity {
+    width: 3ch;
+    text-align: center;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 .tube-usage {
@@ -369,3 +376,4 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
