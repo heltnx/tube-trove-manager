@@ -118,6 +118,19 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer;
+}
+
+.list-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.list-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .list-title-input {
@@ -132,18 +145,6 @@ header {
 
 h2 {
     cursor: pointer;
-}
-
-.list-title {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.list-actions {
-    display: flex;
-    gap: 0.5rem;
 }
 
 .list-content {
@@ -213,7 +214,7 @@ h2 {
 }
 
 .tube.editing .tube-quantity {
-    width: auto; /* Change to auto to remove the spinner */
+    width: 50px;
     text-align: center;
 }
 
@@ -228,12 +229,12 @@ h2 {
 }
 
 .tube-quantity {
-    width: 3ch;
+    width: 50px;
     text-align: center;
 }
 
 input[type="number"].tube-quantity {
-    width: 3ch;
+    width: 50px;
     text-align: center;
     -moz-appearance: textfield;
     appearance: textfield;
@@ -376,4 +377,3 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
-
