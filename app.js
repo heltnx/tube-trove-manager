@@ -108,10 +108,9 @@ class TubeManager {
 
     setupListEventListeners(listElement, list) {
         const header = listElement.querySelector('.list-header');
-        const editBtn = listElement.querySelector('.btn-edit');
+        const titleElement = listElement.querySelector('h2');
         const deleteBtn = listElement.querySelector('.btn-delete');
         const tubeForm = listElement.querySelector('.tube-form');
-        const toggleBtn = listElement.querySelector('.btn-toggle');
 
         // Ajout du bouton mobile
         const addTubeBtn = document.createElement('button');
@@ -125,15 +124,33 @@ class TubeManager {
 
         const toggleExpand = () => listElement.classList.toggle('expanded');
 
-        header.addEventListener('click', (e) => {
-            if (!e.target.closest('button')) {
-                toggleExpand();
-            }
+        titleElement.addEventListener('click', () => {
+            const currentName = titleElement.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentName;
+            input.className = 'list-title-input';
+            
+            const saveTitle = async () => {
+                const newName = input.value.trim();
+                if (newName && newName !== currentName) {
+                    await TubeService.updateList(list.id, newName);
+                    await this.loadLists();
+                } else {
+                    titleElement.textContent = currentName;
+                }
+            };
+
+            input.addEventListener('blur', saveTitle);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    input.blur();
+                }
+            });
+
+            titleElement.replaceWith(input);
+            input.focus();
         });
-
-        toggleBtn.addEventListener('click', toggleExpand);
-
-        editBtn.addEventListener('click', () => this.editList(list, listElement));
         deleteBtn.addEventListener('click', () => {
             if (confirm('Voulez-vous vraiment supprimer cette liste et tous ses tubes ?')) {
                 this.deleteList(list.id);

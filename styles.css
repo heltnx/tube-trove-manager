@@ -118,6 +118,19 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.list-title-input {
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+h2 {
     cursor: pointer;
 }
 
