@@ -231,17 +231,19 @@ class TubeManager {
             tubeElement.innerHTML = `
                 <textarea class="tube-name" rows="1">${tube.name}</textarea>
                 <input type="number" class="tube-quantity" value="${tube.quantity}" min="1">
-                <input type="text" class="tube-usage" value="${tube.usage || ''}">
+                <textarea class="tube-usage" rows="1">${tube.usage || ''}</textarea>
             `;
 
-            // Ajuster automatiquement la hauteur du textarea
-            const textarea = tubeElement.querySelector('textarea');
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = this.scrollHeight + 'px';
+            // Ajuster automatiquement la hauteur des textareas
+            const textareas = tubeElement.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = this.scrollHeight + 'px';
+                });
+                // Déclencher l'événement input pour ajuster initialement la hauteur
+                textarea.dispatchEvent(new Event('input'));
             });
-            // Déclencher l'événement input pour ajuster initialement la hauteur
-            textarea.dispatchEvent(new Event('input'));
 
             // Ajout des écouteurs pour la sauvegarde automatique
             const inputs = tubeElement.querySelectorAll('input, textarea');

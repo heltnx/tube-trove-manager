@@ -230,10 +230,12 @@ h2 {
 
 .tube.editing .tube-usage {
     flex: 1;
-}
-
-.tube.editing .btn-delete {
-    display: none;
+    resize: none;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 2.5rem;
+    font-family: inherit;
 }
 
 .tube-name {
