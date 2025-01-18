@@ -112,7 +112,7 @@ class TubeManager {
         const deleteBtn = listElement.querySelector('.btn-delete');
         const tubeForm = listElement.querySelector('.tube-form');
 
-        // Ajout du bouton mobile
+        // Ajout du bouton pour tous les modes
         const addTubeBtn = document.createElement('button');
         addTubeBtn.className = 'add-tube-btn';
         addTubeBtn.innerHTML = '<i class="icon-plus"></i> Ajouter un tube';
@@ -346,7 +346,7 @@ class TubeManager {
     }
 
     async deleteTube(tubeId) {
-        if (confirm('Êtes-vous sûr de vouloir supprimer ce tube ?')) {
+        if (confirm('Voulez-vous vraiment supprimer ce tube ?')) {
             try {
                 await TubeService.deleteTube(tubeId);
                 await this.loadLists();
