@@ -229,14 +229,22 @@ class TubeManager {
             tubeElement.classList.add('editing');
             tubeElement.dataset.tubeId = tube.id;
             tubeElement.innerHTML = `
-                <input type="text" class="tube-name" value="${tube.name}">
+                <textarea class="tube-name" rows="1">${tube.name}</textarea>
                 <input type="number" class="tube-quantity" value="${tube.quantity}" min="1">
                 <input type="text" class="tube-usage" value="${tube.usage || ''}">
-                <button class="btn btn-delete"><i class="icon-trash"></i></button>
             `;
 
+            // Ajuster automatiquement la hauteur du textarea
+            const textarea = tubeElement.querySelector('textarea');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+            // Déclencher l'événement input pour ajuster initialement la hauteur
+            textarea.dispatchEvent(new Event('input'));
+
             // Ajout des écouteurs pour la sauvegarde automatique
-            const inputs = tubeElement.querySelectorAll('input');
+            const inputs = tubeElement.querySelectorAll('input, textarea');
             inputs.forEach(input => {
                 input.addEventListener('blur', async () => {
                     await this.saveCurrentEditingTube();
@@ -263,11 +271,12 @@ class TubeManager {
         }
 
         const deleteBtn = tubeElement.querySelector('.btn-delete');
-        deleteBtn.addEventListener('click', () => {
-            if (confirm('Voulez-vous vraiment supprimer ce tube ?')) {
+        if (deleteBtn && !isEditing) {  // Only add delete button listener in non-editing mode
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();  // Prevent event bubbling
                 this.deleteTube(tube.id);
-            }
-        });
+            });
+        }
     }
 
     async createNewList() {
@@ -346,13 +355,11 @@ class TubeManager {
     }
 
     async deleteTube(tubeId) {
-        if (confirm('Voulez-vous vraiment supprimer ce tube ?')) {
-            try {
-                await TubeService.deleteTube(tubeId);
-                await this.loadLists();
-            } catch (error) {
-                console.error('Erreur lors de la suppression du tube:', error);
-            }
+        try {
+            await TubeService.deleteTube(tubeId);
+            await this.loadLists();
+        } catch (error) {
+            console.error('Erreur lors de la suppression du tube:', error);
         }
     }
 }

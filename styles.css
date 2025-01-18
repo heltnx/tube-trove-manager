@@ -201,9 +201,11 @@ h2 {
     padding: 0.25rem;
     display: flex;
     align-items: flex-start;
+    gap: 0.5rem;
 }
 
-.tube.editing input {
+.tube.editing input,
+.tube.editing textarea {
     padding: 0.5rem;
     border: 1px solid var(--gray-200);
     border-radius: 0.25rem;
@@ -213,10 +215,12 @@ h2 {
 
 .tube.editing .tube-name {
     width: 200px;
-    min-height: fit-content;
+    resize: none;
+    overflow: hidden;
     white-space: pre-wrap;
     word-break: break-word;
-    height: auto;
+    min-height: 2.5rem;
+    font-family: inherit;
 }
 
 .tube.editing .tube-quantity {
