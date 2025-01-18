@@ -214,7 +214,10 @@ h2 {
 .tube.editing .tube-name {
     width: inherit;
     min-width: 120px;
-    max-width: fit-content;
+    max-width: 200px;
+    height: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .tube.editing .tube-quantity {
@@ -224,6 +227,10 @@ h2 {
 
 .tube.editing .tube-usage {
     flex: 1;
+}
+
+.tube.editing .btn-delete {
+    display: none;
 }
 
 .tube-name {
