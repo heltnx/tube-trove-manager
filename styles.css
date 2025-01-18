@@ -227,17 +227,17 @@ h2 {
 }
 
 .tube-name {
-    flex: 2;
+    width: 200px;
     font-weight: 500;
-    min-width: 120px;
-    max-width: fit-content;
     white-space: pre-wrap;
     word-break: break-word;
+    flex-shrink: 0;
 }
 
 .tube-quantity {
     width: 50px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 input[type="number"].tube-quantity {
@@ -245,12 +245,30 @@ input[type="number"].tube-quantity {
     text-align: center;
     -moz-appearance: textfield;
     appearance: textfield;
+    flex-shrink: 0;
 }
 
 .tube-usage {
     flex: 1;
     color: var(--gray-500);
     min-width: 100px;
+    word-break: break-word;
+}
+
+.tube.editing .tube-name {
+    width: 200px;
+    height: auto;
+}
+
+.tube.editing .tube-quantity {
+    width: 50px;
+}
+
+@media (max-width: 640px) {
+    .tube-name,
+    .tube.editing .tube-name {
+        width: 150px;
+    }
 }
 
 .btn-edit {
