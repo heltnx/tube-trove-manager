@@ -123,14 +123,13 @@ class TubeManager {
         });
 
         header.addEventListener('click', (e) => {
-            // Si on clique sur le titre ou son input, ne pas toggle l'expansion
             if (!e.target.matches('h2, input')) {
                 listElement.classList.toggle('expanded');
             }
         });
 
-        titleElement.addEventListener('click', (e) => {
-            e.stopPropagation(); // Empêche le toggle de la liste
+        titleElement.addEventListener('dblclick', (e) => {
+            e.stopPropagation();
             const currentName = titleElement.textContent;
             const input = document.createElement('input');
             input.type = 'text';
@@ -141,10 +140,9 @@ class TubeManager {
                 const newName = input.value.trim();
                 if (newName && newName !== currentName) {
                     await TubeService.updateList(list.id, newName);
-                    await this.loadLists();
-                } else {
-                    titleElement.textContent = currentName;
                 }
+                titleElement.textContent = await this.getListName(list.id) || currentName;
+                input.replaceWith(titleElement);
             };
 
             input.addEventListener('blur', saveTitle);
@@ -158,10 +156,43 @@ class TubeManager {
             input.focus();
         });
 
-        deleteBtn.addEventListener('click', () => {
-            if (confirm('Voulez-vous vraiment supprimer cette liste et tous ses tubes ?')) {
-                this.deleteList(list.id);
-            }
+        deleteBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            
+            const confirmDialog = document.createElement('div');
+            confirmDialog.className = 'confirm-dialog';
+            confirmDialog.innerHTML = `
+                <div class="confirm-content">
+                    <p>Êtes-vous sûr de vouloir supprimer cette liste et tous ses tubes ?</p>
+                    <label class="confirm-checkbox">
+                        <input type="checkbox" id="confirmCheck">
+                        <span>OK, je confirme la suppression</span>
+                    </label>
+                    <div class="confirm-buttons">
+                        <button class="btn btn-cancel">Annuler</button>
+                        <button class="btn btn-confirm" disabled>Supprimer</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(confirmDialog);
+            
+            const checkbox = confirmDialog.querySelector('#confirmCheck');
+            const confirmBtn = confirmDialog.querySelector('.btn-confirm');
+            const cancelBtn = confirmDialog.querySelector('.btn-cancel');
+            
+            checkbox.addEventListener('change', () => {
+                confirmBtn.disabled = !checkbox.checked;
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                confirmDialog.remove();
+            });
+            
+            confirmBtn.addEventListener('click', async () => {
+                await this.deleteList(list.id);
+                confirmDialog.remove();
+            });
         });
         
         tubeForm.addEventListener('submit', async (e) => {
@@ -170,6 +201,16 @@ class TubeManager {
             tubeForm.classList.remove('expanded');
             await this.loadLists();
         });
+    }
+
+    async getListName(listId) {
+        try {
+            const { data: list } = await TubeService.getList(listId);
+            return list?.name;
+        } catch (error) {
+            console.error('Erreur lors de la récupération du nom de la liste:', error);
+            return null;
+        }
     }
 
     renderTubes(listElement, tubes) {

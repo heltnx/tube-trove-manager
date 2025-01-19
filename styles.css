@@ -105,42 +105,68 @@ header {
     background-color: var(--soft-blue-alt);
 }
 
-.list[data-name*="campello"] .btn-edit {
-    color: #0FA0CE;
+.list[data-name*="campello"] .add-tube-btn {
+    background-color: #0FA0CE;
 }
 
-.list[data-name*="campello"] .btn-edit:hover {
-    color: #0c8eb8;
+.list[data-name*="campello"] .add-tube-btn:hover {
+    background-color: #0c8eb8;
 }
 
-.list-header {
-    padding: 1rem;
+.confirm-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    cursor: pointer;
+    z-index: 1000;
 }
 
-.list-title {
+.confirm-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    max-width: 90%;
+    width: 400px;
+}
+
+.confirm-checkbox {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.list-actions {
-    display: flex;
     gap: 0.5rem;
+    margin: 1rem 0;
 }
 
-.list-title-input {
-    font-size: 1.25rem;
-    font-weight: 600;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--gray-200);
-    border-radius: 0.25rem;
-    width: 100%;
-    max-width: 300px;
+.confirm-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-cancel {
+    background-color: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.btn-confirm {
+    background-color: var(--red-500);
+    color: white;
+}
+
+.btn-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 430px) {
+    .tube .btn-delete {
+        display: none;
+    }
 }
 
 h2 {
