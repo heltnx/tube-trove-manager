@@ -169,6 +169,12 @@ header {
     }
 }
 
+@media (max-width: 640px) {
+    .tube .btn-delete {
+        display: none;
+    }
+}
+
 h2 {
     cursor: pointer;
 }
