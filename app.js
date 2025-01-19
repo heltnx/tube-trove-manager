@@ -139,9 +139,16 @@ class TubeManager {
             const saveTitle = async () => {
                 const newName = input.value.trim();
                 if (newName && newName !== currentName) {
-                    await TubeService.updateList(list.id, newName);
+                    try {
+                        await TubeService.updateList(list.id, newName);
+                        titleElement.textContent = newName;
+                    } catch (error) {
+                        console.error('Erreur lors de la sauvegarde:', error);
+                        titleElement.textContent = currentName;
+                    }
+                } else {
+                    titleElement.textContent = currentName;
                 }
-                titleElement.textContent = await this.getListName(list.id) || currentName;
                 input.replaceWith(titleElement);
             };
 
