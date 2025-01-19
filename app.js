@@ -122,8 +122,8 @@ class TubeManager {
             tubeForm.classList.toggle('expanded');
         });
 
-        header.addEventListener('click', (e) => {
-            if (!e.target.matches('h2, input')) {
+        titleElement.addEventListener('click', (e) => {
+            if (!titleElement.isContentEditable) {
                 listElement.classList.toggle('expanded');
             }
         });
