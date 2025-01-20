@@ -19,8 +19,8 @@ export class TubeList {
 
         // Gérer le clic sur le header complet
         header.addEventListener('click', (e) => {
-            // Ne pas déclencher si on clique sur le bouton de suppression
-            if (!e.target.matches('.btn-delete, .btn-delete *')) {
+            // Ne pas déclencher si on clique sur le bouton de suppression ou sur un input
+            if (!e.target.matches('.btn-delete, .btn-delete *, input')) {
                 this.toggleExpand();
             }
         });
@@ -32,9 +32,10 @@ export class TubeList {
         });
 
         // Gérer la suppression avec confirmation
-        deleteBtn.addEventListener('click', (e) => {
+        deleteBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            this.confirmDelete();
+            e.preventDefault();
+            await this.confirmDelete();
         });
     }
 
@@ -100,41 +101,55 @@ export class TubeList {
         input.focus();
     }
 
-    confirmDelete() {
-        const dialog = document.createElement('div');
-        dialog.className = 'confirm-dialog';
-        dialog.innerHTML = `
-            <div class="confirm-content">
-                <p>Êtes-vous sûr de vouloir supprimer cette liste et tous ses tubes ?</p>
-                <label class="confirm-checkbox">
-                    <input type="checkbox" id="confirmCheck">
-                    <span>OK, je confirme la suppression</span>
-                </label>
-                <div class="confirm-buttons">
-                    <button class="btn btn-cancel">Annuler</button>
-                    <button class="btn btn-confirm" disabled>Supprimer</button>
+    async confirmDelete() {
+        return new Promise((resolve) => {
+            const dialog = document.createElement('div');
+            dialog.className = 'confirm-dialog';
+            dialog.innerHTML = `
+                <div class="confirm-content">
+                    <p>Êtes-vous sûr de vouloir supprimer cette liste et tous ses tubes ?</p>
+                    <label class="confirm-checkbox">
+                        <input type="checkbox" id="confirmCheck">
+                        <span>OK, je confirme la suppression</span>
+                    </label>
+                    <div class="confirm-buttons">
+                        <button class="btn btn-cancel">Annuler</button>
+                        <button class="btn btn-confirm" disabled>Supprimer</button>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        document.body.appendChild(dialog);
+            document.body.appendChild(dialog);
 
-        const checkbox = dialog.querySelector('#confirmCheck');
-        const confirmBtn = dialog.querySelector('.btn-confirm');
-        const cancelBtn = dialog.querySelector('.btn-cancel');
+            const checkbox = dialog.querySelector('#confirmCheck');
+            const confirmBtn = dialog.querySelector('.btn-confirm');
+            const cancelBtn = dialog.querySelector('.btn-cancel');
 
-        checkbox.addEventListener('change', () => {
-            confirmBtn.disabled = !checkbox.checked;
+            checkbox.addEventListener('change', () => {
+                confirmBtn.disabled = !checkbox.checked;
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                dialog.remove();
+                resolve(false);
+            });
+
+            confirmBtn.addEventListener('click', async () => {
+                await this.deleteList();
+                dialog.remove();
+                resolve(true);
+            });
         });
+    }
 
-        cancelBtn.addEventListener('click', () => {
-            dialog.remove();
-        });
-
-        confirmBtn.addEventListener('click', async () => {
-            await this.deleteList();
-            dialog.remove();
-        });
+    async updateTitle(newTitle) {
+        try {
+            await TubeService.updateList(this.list.id, newTitle);
+            this.list.name = newTitle;
+            this.listElement.querySelector('h2').textContent = newTitle;
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du titre:', error);
+        }
     }
 
     async deleteList() {
