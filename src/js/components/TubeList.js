@@ -17,17 +17,21 @@ export class TubeList {
         const title = header.querySelector('h2');
         const deleteBtn = header.querySelector('.btn-delete');
 
+        // Gérer le clic sur le header complet
         header.addEventListener('click', (e) => {
-            if (!e.target.matches('input')) {
+            // Ne pas déclencher si on clique sur le bouton de suppression
+            if (!e.target.matches('.btn-delete, .btn-delete *')) {
                 this.toggleExpand();
             }
         });
 
+        // Gérer le double-clic sur le titre pour l'édition
         title.addEventListener('dblclick', (e) => {
             e.stopPropagation();
             this.startTitleEdit(title);
         });
 
+        // Gérer la suppression avec confirmation
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             this.confirmDelete();
@@ -131,16 +135,6 @@ export class TubeList {
             await this.deleteList();
             dialog.remove();
         });
-    }
-
-    async updateTitle(newTitle) {
-        try {
-            await TubeService.updateList(this.list.id, newTitle);
-            this.list.name = newTitle;
-            this.listElement.querySelector('h2').textContent = newTitle;
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour du titre:', error);
-        }
     }
 
     async deleteList() {
